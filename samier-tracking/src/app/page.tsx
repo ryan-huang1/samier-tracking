@@ -26,9 +26,14 @@ const VideoFirstFrame = () => {
     y: number;
   } | null>(null);
   const [points, setPoints] = useState<
-    { x: number; y: number; dotX: number; dotY: number }[]
+    {
+      x: number;
+      y: number;
+      dotX: number;
+      dotY: number;
+      isDragging: boolean;
+    }[]
   >([]);
-  const [isDragging, setIsDragging] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -92,6 +97,12 @@ const VideoFirstFrame = () => {
   const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
     if (imageRef.current) {
       const img = imageRef.current;
+
+      // Prevent adding new points if we already have two
+      if (savedPoint && points.length >= 2) {
+        return;
+      }
+
       const rect = img.getBoundingClientRect();
 
       const x = event.clientX - rect.left;
@@ -110,7 +121,13 @@ const VideoFirstFrame = () => {
         if (points.length < 2) {
           setPoints((prevPoints) => [
             ...prevPoints,
-            { x: realX, y: realY, dotX: x, dotY: y },
+            {
+              x: realX,
+              y: realY,
+              dotX: x,
+              dotY: y,
+              isDragging: false,
+            },
           ]);
         }
       }
@@ -119,11 +136,16 @@ const VideoFirstFrame = () => {
 
   const handleDotMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
-    setIsDragging(true);
+    setDotPosition(null);
+    setClickCoordinates(null);
   };
 
-  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (isDragging && imageRef.current) {
+  const handleDotMouseMove = (
+    event: React.MouseEvent<HTMLDivElement>,
+    index: number
+  ) => {
+    event.preventDefault();
+    if (points[index].isDragging && imageRef.current) {
       const img = imageRef.current;
       const rect = img.getBoundingClientRect();
 
@@ -139,13 +161,63 @@ const VideoFirstFrame = () => {
       const realX = x * scaleX;
       const realY = y * scaleY;
 
-      setDotPosition({ x, y });
-      setClickCoordinates({ x: realX, y: realY });
+      setPoints((prevPoints) =>
+        prevPoints.map((point, i) =>
+          i === index
+            ? { ...point, x: realX, y: realY, dotX: x, dotY: y }
+            : point
+        )
+      );
     }
   };
 
+  const handleDotMouseUp = (index: number) => {
+    setPoints((prevPoints) =>
+      prevPoints.map((point, i) =>
+        i === index ? { ...point, isDragging: false } : point
+      )
+    );
+  };
+
+  const handleDotMouseDownPoint = (index: number) => {
+    setPoints((prevPoints) =>
+      prevPoints.map((point, i) =>
+        i === index ? { ...point, isDragging: true } : point
+      )
+    );
+  };
+
   const handleMouseUp = () => {
-    setIsDragging(false);
+    setPoints((prevPoints) =>
+      prevPoints.map((point) => ({ ...point, isDragging: false }))
+    );
+  };
+
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    points.forEach((point, index) => {
+      if (point.isDragging && imageRef.current) {
+        const img = imageRef.current;
+        const rect = img.getBoundingClientRect();
+
+        let x = event.clientX - rect.left;
+        let y = event.clientY - rect.top;
+
+        x = Math.max(0, Math.min(x, img.clientWidth));
+        y = Math.max(0, Math.min(y, img.clientHeight));
+
+        const scaleX = img.naturalWidth / img.clientWidth;
+        const scaleY = img.naturalHeight / img.clientHeight;
+
+        const realX = x * scaleX;
+        const realY = y * scaleY;
+
+        setPoints((prevPoints) =>
+          prevPoints.map((p, i) =>
+            i === index ? { ...p, x: realX, y: realY, dotX: x, dotY: y } : p
+          )
+        );
+      }
+    });
   };
 
   const handleConfirm = () => {
@@ -189,8 +261,8 @@ const VideoFirstFrame = () => {
                 <div className="flex flex-col items-center justify-center pt-5 pb-6">
                   <Upload className="w-8 h-8 mb-4 text-gray-500" />
                   <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Click to upload</span> or
-                    drag and drop
+                    <span className="font-semibold">Click to upload</span> or drag
+                    and drop
                   </p>
                   <p className="text-xs text-gray-500">
                     MP4, WebM, or Ogg (MAX. 100MB)
@@ -288,6 +360,12 @@ const VideoFirstFrame = () => {
                     {points.map((point, index) => (
                       <div
                         key={index}
+                        onMouseDown={(e) => {
+                          e.stopPropagation();
+                          handleDotMouseDownPoint(index);
+                        }}
+                        onMouseMove={(e) => handleDotMouseMove(e, index)}
+                        onMouseUp={() => handleDotMouseUp(index)}
                         style={{
                           position: "absolute",
                           left: point.dotX,
@@ -297,6 +375,7 @@ const VideoFirstFrame = () => {
                           height: "10px",
                           borderRadius: "50%",
                           backgroundColor: "rgba(0, 0, 255, 0.5)",
+                          cursor: "grab",
                         }}
                       ></div>
                     ))}
