@@ -1,5 +1,7 @@
 "use client"
 
+// app/page.tsx
+
 import React, { useState, useEffect } from 'react';
 
 const Page = () => {
@@ -44,9 +46,20 @@ const Page = () => {
   const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
     const img = event.currentTarget;
     const rect = img.getBoundingClientRect();
+
+    // Coordinates relative to the displayed image
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
-    setClickCoordinates({ x, y });
+
+    // Scaling factors
+    const scaleX = (img.naturalWidth || img.width) / img.width;
+    const scaleY = (img.naturalHeight || img.height) / img.height;
+
+    // Coordinates relative to the actual image size
+    const realX = x * scaleX;
+    const realY = y * scaleY;
+
+    setClickCoordinates({ x: realX, y: realY });
   };
 
   return (
@@ -61,7 +74,7 @@ const Page = () => {
             src={firstFrame}
             alt="First Frame"
             onClick={handleImageClick}
-            style={{ cursor: 'crosshair' }}
+            style={{ cursor: 'crosshair', maxWidth: '100%', height: 'auto' }}
           />
         </div>
       )}
@@ -70,7 +83,7 @@ const Page = () => {
         <div>
           <h2>Clicked Coordinates</h2>
           <p>
-            X: {clickCoordinates.x}, Y: {clickCoordinates.y}
+            X: {clickCoordinates.x.toFixed(2)}, Y: {clickCoordinates.y.toFixed(2)}
           </p>
         </div>
       )}
