@@ -97,42 +97,42 @@ const VideoFirstFrame = () => {
   const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
     if (imageRef.current) {
       const img = imageRef.current;
-
+  
       // Prevent adding new points if we already have two
       if (savedPoint && points.length >= 2) {
         return;
       }
-
+  
       const rect = img.getBoundingClientRect();
-
+  
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
-
+  
       const scaleX = img.naturalWidth / img.clientWidth;
       const scaleY = img.naturalHeight / img.clientHeight;
-
+  
       const realX = x * scaleX;
       const realY = y * scaleY;
-
+  
       if (!savedPoint) {
         setDotPosition({ x, y });
         setClickCoordinates({ x: realX, y: realY });
       } else {
-        if (points.length < 2) {
-          setPoints((prevPoints) => [
-            ...prevPoints,
-            {
-              x: realX,
-              y: realY,
-              dotX: x,
-              dotY: y,
-              isDragging: false,
-            },
-          ]);
-        }
+        // Add point to points array
+        setPoints((prevPoints) => [
+          ...prevPoints,
+          {
+            x: realX,
+            y: realY,
+            dotX: x,
+            dotY: y,
+            isDragging: false,
+          },
+        ]);
       }
     }
   };
+  
 
   const handleDotMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -163,9 +163,7 @@ const VideoFirstFrame = () => {
 
       setPoints((prevPoints) =>
         prevPoints.map((point, i) =>
-          i === index
-            ? { ...point, x: realX, y: realY, dotX: x, dotY: y }
-            : point
+          i === index ? { ...point, x: realX, y: realY, dotX: x, dotY: y } : point
         )
       );
     }
@@ -226,6 +224,12 @@ const VideoFirstFrame = () => {
       setDotPosition(null);
       setClickCoordinates(null);
     }
+  };
+
+  const handleBack = () => {
+    // Reset to the coordinate selection screen
+    setSavedPoint(null);
+    setPoints([]);
   };
 
   const calculateDistance = () => {
@@ -326,10 +330,21 @@ const VideoFirstFrame = () => {
                       ></div>
                     )}
                   </div>
+                  {clickCoordinates && (
+                    <div className="mt-2">
+                      <h3 className="text-lg font-semibold mb-2">
+                        Coordinates:
+                      </h3>
+                      <p>
+                        X: {clickCoordinates.x.toFixed(2)}, Y:{" "}
+                        {clickCoordinates.y.toFixed(2)}
+                      </p>
+                    </div>
+                  )}
                   {dotPosition && (
                     <Button
                       className="mt-4"
-                      variant="primary"
+                      variant="default" // Changed from "primary" to "default"
                       onClick={handleConfirm}
                     >
                       Confirm
@@ -401,14 +416,19 @@ const VideoFirstFrame = () => {
                       </svg>
                     )}
                   </div>
-                  {points.length === 2 && (
-                    <div className="mt-4">
-                      <h3 className="text-lg font-semibold mb-2">
-                        Pixel Distance:
-                      </h3>
-                      <p>{distance.toFixed(2)} pixels</p>
-                    </div>
-                  )}
+                  <div className="mt-4 flex justify-between">
+                    <Button variant="secondary" onClick={handleBack}>
+                      Back
+                    </Button>
+                    {points.length === 2 && (
+                      <div className="flex items-center">
+                        <h3 className="text-lg font-semibold mr-2">
+                          Pixel Distance:
+                        </h3>
+                        <p>{distance.toFixed(2)} pixels</p>
+                      </div>
+                    )}
+                  </div>
                 </>
               )}
             </div>
