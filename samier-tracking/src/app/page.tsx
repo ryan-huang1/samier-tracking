@@ -1,5 +1,4 @@
 "use client"
-// app/page.tsx
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Upload } from 'lucide-react';
@@ -154,9 +153,11 @@ const VideoFirstFrame = () => {
       onMouseUp={handleMouseUp}
     >
       <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Video First Frame Capture</CardTitle>
-        </CardHeader>
+        {!firstFrame && (
+          <CardHeader>
+            <CardTitle>Video First Frame Capture</CardTitle>
+          </CardHeader>
+        )}
         <CardContent className="space-y-4">
           {!firstFrame && (
             <div className="flex items-center justify-center w-full">
@@ -194,10 +195,10 @@ const VideoFirstFrame = () => {
           )}
           {firstFrame && (
             <div>
-              <h3 className="text-lg font-semibold mb-2">First Frame:</h3>
+              <h3 className="text-lg font-semibold mb-2">Click on Object to Track:</h3>
               <div
                 style={{ position: 'relative', display: 'inline-block' }}
-                onMouseDown={handleMouseUp} // Stop dragging when clicking outside the dot
+                onMouseDown={handleMouseUp}
               >
                 <img
                   ref={imageRef}
@@ -215,10 +216,10 @@ const VideoFirstFrame = () => {
                       left: dotPosition.x,
                       top: dotPosition.y,
                       transform: 'translate(-50%, -50%)',
-                      width: '10px', // Made the dot smaller
+                      width: '10px',
                       height: '10px',
                       borderRadius: '50%',
-                      backgroundColor: 'rgba(255, 0, 0, 0.5)', // Semi-transparent red
+                      backgroundColor: 'rgba(255, 0, 0, 0.5)',
                       cursor: 'grab',
                       transition: isDragging ? 'none' : 'left 0.3s, top 0.3s',
                     }}
