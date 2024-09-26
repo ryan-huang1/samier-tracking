@@ -1,47 +1,78 @@
 "use client"
 
-// app/page.tsx
+import React, { useState, useRef, useEffect } from 'react';
+import { Upload } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 
-import React, { useState, useEffect } from 'react';
-
-const Page = () => {
-  const [videoFile, setVideoFile] = useState<File | null>(null);
+const VideoFirstFrame = () => {
+  const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [firstFrame, setFirstFrame] = useState<string | null>(null);
-  const [clickCoordinates, setClickCoordinates] = useState<{ x: number; y: number } | null>(null);
+  const [clickCoordinates, setClickCoordinates] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setVideoFile(event.target.files[0]);
+    const file = event.target.files && event.target.files[0];
+    if (file && file.type.startsWith('video/')) {
+      const videoUrl = URL.createObjectURL(file);
+      setVideoSrc(videoUrl);
+      setFirstFrame(null);
       setClickCoordinates(null);
+    } else {
+      alert('Please select a valid video file.');
     }
   };
 
   useEffect(() => {
-    if (videoFile) {
-      const url = URL.createObjectURL(videoFile);
-      const video = document.createElement('video');
-      video.src = url;
-      video.crossOrigin = 'anonymous';
+    if (videoSrc && videoRef.current) {
+      const videoElement = videoRef.current;
 
-      video.addEventListener('loadeddata', () => {
-        video.currentTime = 0;
-      });
+      const handleLoadedMetadata = () => {
+        // Seek to the first frame
+        videoElement.currentTime = 0;
+      };
 
-      video.addEventListener('seeked', () => {
+      const handleSeeked = () => {
+        // Create a canvas to capture the frame
         const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
           const dataURL = canvas.toDataURL('image/png');
           setFirstFrame(dataURL);
-          URL.revokeObjectURL(url);
         }
-      });
+
+        // Clean up event listeners
+        videoElement.removeEventListener('seeked', handleSeeked);
+        videoElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      };
+
+      // Add event listeners
+      videoElement.addEventListener('loadedmetadata', handleLoadedMetadata);
+      videoElement.addEventListener('seeked', handleSeeked);
+
+      // Load the video
+      videoElement.load();
+
+      // Clean up on unmount or when videoSrc changes
+      return () => {
+        videoElement.removeEventListener('seeked', handleSeeked);
+        videoElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
+      };
     }
-  }, [videoFile]);
+  }, [videoSrc]);
 
   const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
     const img = event.currentTarget;
@@ -63,32 +94,74 @@ const Page = () => {
   };
 
   return (
-    <div>
-      <h1>Upload a Video</h1>
-      <input type="file" accept="video/*" onChange={handleFileChange} />
-
-      {firstFrame && (
-        <div>
-          <h2>First Frame</h2>
-          <img
-            src={firstFrame}
-            alt="First Frame"
-            onClick={handleImageClick}
-            style={{ cursor: 'crosshair', maxWidth: '100%', height: 'auto' }}
-          />
-        </div>
-      )}
-
-      {clickCoordinates && (
-        <div>
-          <h2>Clicked Coordinates</h2>
-          <p>
-            X: {clickCoordinates.x.toFixed(2)}, Y: {clickCoordinates.y.toFixed(2)}
-          </p>
-        </div>
-      )}
+    <div className="flex items-center justify-center min-h-screen">
+      <Card className="w-full max-w-md">
+        <CardHeader>
+          <CardTitle>Video First Frame Capture</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-center w-full">
+            <label
+              htmlFor="video-upload"
+              className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <Upload className="w-8 h-8 mb-4 text-gray-500" />
+                <p className="mb-2 text-sm text-gray-500">
+                  <span className="font-semibold">Click to upload</span> or drag
+                  and drop
+                </p>
+                <p className="text-xs text-gray-500">
+                  MP4, WebM, or Ogg (MAX. 100MB)
+                </p>
+              </div>
+              <input
+                id="video-upload"
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+                accept="video/*"
+              />
+            </label>
+          </div>
+          {videoSrc && (
+            <video
+              ref={videoRef}
+              src={videoSrc}
+              style={{ display: 'none' }}
+              crossOrigin="anonymous"
+            />
+          )}
+          {firstFrame && (
+            <div>
+              <h3 className="text-lg font-semibold mb-2">First Frame:</h3>
+              <img
+                src={firstFrame}
+                alt="First frame of the video"
+                className="w-full cursor-crosshair"
+                onClick={handleImageClick}
+              />
+            </div>
+          )}
+          {clickCoordinates && (
+            <div>
+              <h3 className="text-lg font-semibold mb-2">Clicked Coordinates:</h3>
+              <p>
+                X: {clickCoordinates.x.toFixed(2)}, Y:{' '}
+                {clickCoordinates.y.toFixed(2)}
+              </p>
+            </div>
+          )}
+        </CardContent>
+        <CardFooter className="flex justify-center">
+          <Button onClick={() => document.getElementById('video-upload')?.click()}>
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Video
+          </Button>
+        </CardFooter>
+      </Card>
     </div>
   );
 };
 
-export default Page;
+export default VideoFirstFrame;
