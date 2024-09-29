@@ -9,6 +9,7 @@ import {
   CardHeader, 
   CardTitle,
 } from "@/components/ui/card";
+import { Loader2 } from "lucide-react"; // Import the loader icon
 
 const VideoFirstFrame = () => {
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
@@ -34,6 +35,7 @@ const VideoFirstFrame = () => {
       isDragging: boolean;
     }[]
   >([]);
+  const [loading, setLoading] = useState<boolean>(false); // State to track loading
   const imageRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileRef = useRef<File | null>(null); // Reference to store the selected video file
@@ -241,6 +243,7 @@ const VideoFirstFrame = () => {
 
   const handleNext = async () => {
     if (fileRef.current && savedPoint) {
+      setLoading(true); // Start loading
       const formData = new FormData();
       formData.append("video", fileRef.current);
       formData.append("x", savedPoint.x.toFixed(2));
@@ -256,6 +259,8 @@ const VideoFirstFrame = () => {
         console.log(result);
       } catch (error) {
         console.error("Error:", error);
+      } finally {
+        setLoading(false); // End loading
       }
     }
   };
@@ -442,12 +447,17 @@ const VideoFirstFrame = () => {
                       Back
                     </Button>
                     <Button
-                      className="ml-4"
+                      className="ml-2 flex justify-center items-center"
+                      style={{ minWidth: '3rem' }} // Set a minimum width to keep the button consistent
                       variant="default"
                       onClick={handleNext}
-                      disabled={points.length !== 2} // Disable button until two points are selected
+                      disabled={points.length !== 2 || loading} // Disable button until two points are selected or loading
                     >
-                      Next
+                      {loading ? (
+                        <Loader2 className="animate-spin h-5 w-5 text-white" />
+                      ) : (
+                        "Next"
+                      )}
                     </Button>
                     <div
                       className={`ml-4 transition-opacity duration-200 ${
