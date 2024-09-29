@@ -4,9 +4,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardHeader,
+  Card, 
+  CardContent, 
+  CardHeader, 
   CardTitle,
 } from "@/components/ui/card";
 
@@ -99,22 +99,22 @@ const VideoFirstFrame = () => {
   const handleImageClick = (event: React.MouseEvent<HTMLImageElement>) => {
     if (imageRef.current) {
       const img = imageRef.current;
-  
+
       if (savedPoint && points.length >= 2) {
         return;
       }
-  
+
       const rect = img.getBoundingClientRect();
-  
+
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
-  
+
       const scaleX = img.naturalWidth / img.clientWidth;
       const scaleY = img.naturalHeight / img.clientHeight;
-  
+
       const realX = x * scaleX;
       const realY = y * scaleY;
-  
+
       if (!savedPoint) {
         setDotPosition({ x, y });
         setClickCoordinates({ x: realX, y: realY });
@@ -349,26 +349,28 @@ const VideoFirstFrame = () => {
                       ></div>
                     )}
                   </div>
-                  {clickCoordinates && (
-                    <div className="mt-2">
-                      <h3 className="text-lg font-semibold mb-2">
-                        Coordinates:
-                      </h3>
-                      <p>
-                        X: {clickCoordinates.x.toFixed(2)}, Y:{" "}
-                        {clickCoordinates.y.toFixed(2)}
-                      </p>
-                    </div>
-                  )}
-                  {dotPosition && (
+                  <div className="mt-4 flex items-center">
                     <Button
-                      className="mt-4"
                       variant="default"
                       onClick={handleConfirm}
+                      disabled={!clickCoordinates} // Disable button if no coordinates are selected
                     >
-                      Confirm
+                      Next
                     </Button>
-                  )}
+                    <div
+                      className={`ml-4 transition-opacity duration-200 ${
+                        clickCoordinates ? "opacity-100" : "opacity-0"
+                      }`}
+                      style={{ whiteSpace: "nowrap" }} // Keep coordinates on one line
+                    >
+                      {clickCoordinates && (
+                        <p>
+                          <strong>Coordinates:</strong> X: {clickCoordinates.x.toFixed(2)}, Y: 
+                          {clickCoordinates.y.toFixed(2)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </>
               ) : (
                 <>
@@ -451,6 +453,7 @@ const VideoFirstFrame = () => {
                       className="ml-4"
                       variant="default"
                       onClick={handleNext}
+                      disabled={points.length !== 2} // Disable button until two points are selected
                     >
                       Next
                     </Button>
