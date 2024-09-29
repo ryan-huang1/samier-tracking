@@ -437,18 +437,10 @@ const VideoFirstFrame = () => {
                       </svg>
                     )}
                   </div>
-                  <div className="mt-4 flex justify-between items-center">
+                  <div className="mt-4 flex items-center justify-left">
                     <Button variant="secondary" onClick={handleBack}>
                       Back
                     </Button>
-                    {points.length === 2 && (
-                      <div className="flex items-center">
-                        <h3 className="text-lg font-semibold mr-2">
-                          Pixel Distance:
-                        </h3>
-                        <p>{distance.toFixed(2)} pixels</p>
-                      </div>
-                    )}
                     <Button
                       className="ml-4"
                       variant="default"
@@ -457,6 +449,18 @@ const VideoFirstFrame = () => {
                     >
                       Next
                     </Button>
+                    <div
+                      className={`ml-4 transition-opacity duration-200 ${
+                        points.length === 2 ? "opacity-100" : "opacity-0"
+                      }`}
+                      style={{ whiteSpace: "nowrap" }} // Keep Pixel Distance on one line
+                    >
+                      {points.length === 2 && (
+                        <p>
+                          <strong>Pixel Distance:</strong> {distance.toFixed(2)} pixels
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </>
               )}
