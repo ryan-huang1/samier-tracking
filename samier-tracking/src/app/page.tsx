@@ -36,6 +36,7 @@ const VideoFirstFrame = () => {
   >([]);
   const imageRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const fileRef = useRef<File | null>(null); // Reference to store the selected video file
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files && event.target.files[0];
@@ -47,6 +48,7 @@ const VideoFirstFrame = () => {
       setDotPosition(null);
       setSavedPoint(null);
       setPoints([]);
+      fileRef.current = file; // Store the file reference
     } else {
       alert("Please select a valid video file.");
     }
@@ -98,7 +100,6 @@ const VideoFirstFrame = () => {
     if (imageRef.current) {
       const img = imageRef.current;
   
-      // Prevent adding new points if we already have two
       if (savedPoint && points.length >= 2) {
         return;
       }
@@ -118,7 +119,6 @@ const VideoFirstFrame = () => {
         setDotPosition({ x, y });
         setClickCoordinates({ x: realX, y: realY });
       } else {
-        // Add point to points array
         setPoints((prevPoints) => [
           ...prevPoints,
           {
@@ -132,7 +132,6 @@ const VideoFirstFrame = () => {
       }
     }
   };
-  
 
   const handleDotMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -227,7 +226,6 @@ const VideoFirstFrame = () => {
   };
 
   const handleBack = () => {
-    // Reset to the coordinate selection screen
     setSavedPoint(null);
     setPoints([]);
   };
@@ -239,6 +237,27 @@ const VideoFirstFrame = () => {
       return Math.sqrt(dx * dx + dy * dy);
     }
     return 0;
+  };
+
+  const handleNext = async () => {
+    if (fileRef.current && savedPoint) {
+      const formData = new FormData();
+      formData.append("video", fileRef.current);
+      formData.append("x", savedPoint.x.toFixed(2));
+      formData.append("y", savedPoint.y.toFixed(2));
+
+      try {
+        const response = await fetch("http://127.0.0.1:5000/process_video", {
+          method: "POST",
+          body: formData,
+        });
+
+        const result = await response.json();
+        console.log(result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
   };
 
   const distance = calculateDistance();
@@ -344,7 +363,7 @@ const VideoFirstFrame = () => {
                   {dotPosition && (
                     <Button
                       className="mt-4"
-                      variant="default" // Changed from "primary" to "default"
+                      variant="default"
                       onClick={handleConfirm}
                     >
                       Confirm
@@ -416,7 +435,7 @@ const VideoFirstFrame = () => {
                       </svg>
                     )}
                   </div>
-                  <div className="mt-4 flex justify-between">
+                  <div className="mt-4 flex justify-between items-center">
                     <Button variant="secondary" onClick={handleBack}>
                       Back
                     </Button>
@@ -428,6 +447,13 @@ const VideoFirstFrame = () => {
                         <p>{distance.toFixed(2)} pixels</p>
                       </div>
                     )}
+                    <Button
+                      className="ml-4"
+                      variant="default"
+                      onClick={handleNext}
+                    >
+                      Next
+                    </Button>
                   </div>
                 </>
               )}
