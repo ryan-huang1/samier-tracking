@@ -242,19 +242,23 @@ const VideoFirstFrame = () => {
   };
 
   const handleNext = async () => {
-    if (fileRef.current && savedPoint) {
+    if (fileRef.current && savedPoint && points.length === 2) {
       setLoading(true); // Start loading
+  
+      const pixelDistance = calculateDistance(); // Distance in pixels between the two selected points
+  
       const formData = new FormData();
       formData.append("video", fileRef.current);
       formData.append("x", savedPoint.x.toFixed(2));
       formData.append("y", savedPoint.y.toFixed(2));
-
+      formData.append("pixel_to_meter", pixelDistance.toFixed(2)); // Send pixel distance
+  
       try {
         const response = await fetch("http://127.0.0.1:5000/process_video", {
           method: "POST",
           body: formData,
         });
-
+  
         const result = await response.json();
         console.log(result);
       } catch (error) {
@@ -263,7 +267,7 @@ const VideoFirstFrame = () => {
         setLoading(false); // End loading
       }
     }
-  };
+  };  
 
   const distance = calculateDistance();
 
