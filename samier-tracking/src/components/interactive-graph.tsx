@@ -8,10 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 interface DataPoint {
   x: number
   y1: number
-  y2: number
+  y2?: number
 }
 
-const GRAPH_TITLE = "Interactive Dual-Line Graph"
+const GRAPH_TITLE = "Interactive Dynamic Line Graph"
 const GRAPH_DESCRIPTION = "Drag to select points, then click the button to delete them. Click outside the graph to clear selection."
 const DARK_BLUE_LINE_NAME = "Dark Blue Line"
 const BLACK_LINE_NAME = "Black Line"
@@ -27,6 +27,8 @@ export function InteractiveGraph() {
   const [selectedPoints, setSelectedPoints] = useState<number[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const chartRef = useRef<HTMLDivElement>(null)
+
+  const hasTwoLines = data.some(point => point.y2 !== undefined)
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
@@ -68,6 +70,30 @@ export function InteractiveGraph() {
     }
   }, [handleOutsideClick])
 
+  const renderDot = (color: string) => ({ cx, cy, index }: { cx: number, cy: number, index: number }) => (
+    <g>
+      <circle
+        cx={cx}
+        cy={cy}
+        r={selectedPoints.includes(index) ? 8 : 4}
+        fill={selectedPoints.includes(index) ? "hsl(var(--destructive))" : color}
+        stroke={selectedPoints.includes(index) ? "hsl(var(--destructive-foreground))" : "none"}
+        strokeWidth={2}
+      />
+      {selectedPoints.includes(index) && (
+        <circle
+          cx={cx}
+          cy={cy}
+          r={12}
+          fill="none"
+          stroke="hsl(var(--destructive))"
+          strokeWidth={2}
+          opacity={0.5}
+        />
+      )}
+    </g>
+  )
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -96,60 +122,18 @@ export function InteractiveGraph() {
                 stroke="#00008B"
                 strokeWidth={2}
                 name={DARK_BLUE_LINE_NAME}
-                dot={({ cx, cy, index }) => (
-                  <g>
-                    <circle
-                      cx={cx}
-                      cy={cy}
-                      r={selectedPoints.includes(index) ? 8 : 4}
-                      fill={selectedPoints.includes(index) ? "hsl(var(--destructive))" : "#00008B"}
-                      stroke={selectedPoints.includes(index) ? "hsl(var(--destructive-foreground))" : "none"}
-                      strokeWidth={2}
-                    />
-                    {selectedPoints.includes(index) && (
-                      <circle
-                        cx={cx}
-                        cy={cy}
-                        r={12}
-                        fill="none"
-                        stroke="hsl(var(--destructive))"
-                        strokeWidth={2}
-                        opacity={0.5}
-                      />
-                    )}
-                  </g>
-                )}
+                dot={renderDot("#00008B")}
               />
-              <Line
-                type="monotone"
-                dataKey="y2"
-                stroke="#000000"
-                strokeWidth={2}
-                name={BLACK_LINE_NAME}
-                dot={({ cx, cy, index }) => (
-                  <g>
-                    <circle
-                      cx={cx}
-                      cy={cy}
-                      r={selectedPoints.includes(index) ? 8 : 4}
-                      fill={selectedPoints.includes(index) ? "hsl(var(--destructive))" : "#000000"}
-                      stroke={selectedPoints.includes(index) ? "hsl(var(--destructive-foreground))" : "none"}
-                      strokeWidth={2}
-                    />
-                    {selectedPoints.includes(index) && (
-                      <circle
-                        cx={cx}
-                        cy={cy}
-                        r={12}
-                        fill="none"
-                        stroke="hsl(var(--destructive))"
-                        strokeWidth={2}
-                        opacity={0.5}
-                      />
-                    )}
-                  </g>
-                )}
-              />
+              {hasTwoLines && (
+                <Line
+                  type="monotone"
+                  dataKey="y2"
+                  stroke="#000000"
+                  strokeWidth={2}
+                  name={BLACK_LINE_NAME}
+                  dot={renderDot("#000000")}
+                />
+              )}
             </LineChart>
           </ResponsiveContainer>
         </div>
