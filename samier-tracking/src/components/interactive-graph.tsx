@@ -21,6 +21,9 @@ interface InteractiveGraphProps {
 const DARK_BLUE_LINE_NAME = "X Value"
 const BLACK_LINE_NAME = "Y Value"
 
+// Define the chart margins as a constant
+const CHART_MARGIN = { top: 20, right: 30, left: 20, bottom: 20 }
+
 export function InteractiveGraph({ data, graphTitle, graphDescription, onDelete }: InteractiveGraphProps) {
   const [selectedPoints, setSelectedPoints] = useState<number[]>([])
   const [isDragging, setIsDragging] = useState(false)
@@ -38,8 +41,16 @@ export function InteractiveGraph({ data, graphTitle, graphDescription, onDelete 
     if (!isDragging || !chartRef.current) return
 
     const chartRect = chartRef.current.getBoundingClientRect()
-    const x = e.clientX - chartRect.left
-    const selectedIndex = Math.floor((x / chartRect.width) * data.length)
+    
+    // Calculate the plotting area's width and cursor position within it
+    const plotWidth = chartRect.width - CHART_MARGIN.left - CHART_MARGIN.right
+    const plotX = e.clientX - chartRect.left - CHART_MARGIN.left
+
+    // Clamp plotX between 0 and plotWidth
+    const clampedPlotX = Math.max(0, Math.min(plotX, plotWidth))
+
+    // Calculate the selected index based on the clamped plotX
+    const selectedIndex = Math.floor((clampedPlotX / plotWidth) * data.length)
 
     if (selectedIndex >= 0 && selectedIndex < data.length && !selectedPoints.includes(selectedIndex)) {
       setSelectedPoints(prev => [...prev, selectedIndex])
@@ -108,7 +119,7 @@ export function InteractiveGraph({ data, graphTitle, graphDescription, onDelete 
           className="w-full h-[400px] cursor-crosshair select-none"
         >
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+            <LineChart data={data} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="x" />
               <YAxis />
