@@ -22,8 +22,8 @@ interface InteractiveGraphProps {
 const DARK_BLUE_LINE_NAME = "X Value";
 const BLACK_LINE_NAME = "Y Value";
 
-// Define the chart margins as a constant
-const CHART_MARGIN = { top: 20, right: 30, left: 30, bottom: 40 };
+// Updated chart margins with increased bottom margin
+const CHART_MARGIN = { top: 20, right: 30, left: 30, bottom: 20 };
 
 export function InteractiveGraph({ data, graphTitle, graphDescription, yAxisLabel, onDelete }: InteractiveGraphProps) {
   const [selectedPoints, setSelectedPoints] = useState<number[]>([]);
@@ -131,7 +131,7 @@ export function InteractiveGraph({ data, graphTitle, graphDescription, yAxisLabe
                 <Label value={yAxisLabel} angle={-90} position="insideLeft" />
               </YAxis>
               <Tooltip />
-              <Legend />
+              <Legend/>
               <Line
                 type="monotone"
                 dataKey="y1"
