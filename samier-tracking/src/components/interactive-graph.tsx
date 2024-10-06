@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
@@ -121,7 +121,8 @@ export function InteractiveGraph({ data, graphTitle, graphDescription, onDelete 
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="x" />
+              {/* Limit the X-axis labels to 5 */}
+              <XAxis dataKey="x" interval={Math.ceil(data.length / 5)}/>
               <YAxis />
               <Tooltip />
               <Legend />

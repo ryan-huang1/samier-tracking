@@ -23,6 +23,11 @@ const VideoProcessingPage = () => {
   const [positionData, setPositionData] = useState<PositionDataPoint[]>([]);
   const [velocityData, setVelocityData] = useState<VelocityDataPoint[]>([]);
 
+  // Helper function to round to the hundredth place
+  const roundToHundredth = (value: number) => {
+    return Math.round(value * 100) / 100;
+  };
+
   const handleProcessingComplete = (result: any) => {
     // Parse the response and extract relevant information
     if (result) {
@@ -30,18 +35,18 @@ const VideoProcessingPage = () => {
       const positions = result.positions;
       const velocities = result.velocities;
 
-      // Convert positions to graph data points for InteractiveGraph
+      // Convert positions to graph data points for InteractiveGraph, rounded to hundredth place
       const posData: PositionDataPoint[] = positions.time_steps.map((time: number, index: number) => ({
-        x: time,
-        y1: positions.x_positions_meters[index],
-        y2: positions.y_positions_meters_flipped[index],
+        x: roundToHundredth(time),
+        y1: roundToHundredth(positions.x_positions_meters[index]),
+        y2: roundToHundredth(positions.y_positions_meters_flipped[index]),
       }));
 
-      // Convert velocities to graph data points for InteractiveGraph
+      // Convert velocities to graph data points for InteractiveGraph, rounded to hundredth place
       const velData: VelocityDataPoint[] = velocities.time_steps.map((time: number, index: number) => ({
-        x: time,
-        y1: velocities.x_velocities_m_per_s[index],
-        y2: velocities.y_velocities_m_per_s[index],
+        x: roundToHundredth(time),
+        y1: roundToHundredth(velocities.x_velocities_m_per_s[index]),
+        y2: roundToHundredth(velocities.y_velocities_m_per_s[index]),
       }));
 
       // Set the parsed result to the state
@@ -112,7 +117,7 @@ const VideoProcessingPage = () => {
               </div>
               {/* Position Graph with Top and Bottom Margin of 40px */}
               <div className="my-10">
-                <h3 className="text-lg font-semibold pb-1.5">Position Graph:</h3>
+                <h3 className="text-lg font-semibold pb-2.5">Position Graph:</h3>
                 <InteractiveGraph 
                   data={positionData} 
                   graphTitle="Position Data" 
@@ -122,7 +127,7 @@ const VideoProcessingPage = () => {
               </div>
               {/* Velocity Graph with Top Margin of 40px and No Bottom Margin */}
               <div className="mt-10 mb-0">
-                <h3 className="text-lg font-semibold pb-1.5">Velocity Graph:</h3>
+                <h3 className="text-lg font-semibold pb-2.5">Velocity Graph:</h3>
                 <InteractiveGraph 
                   data={velocityData} 
                   graphTitle="Velocity Data" 
