@@ -50,8 +50,8 @@ export function InteractiveGraph({ data, graphTitle, graphDescription, yAxisLabe
     // Clamp plotX between 0 and plotWidth
     const clampedPlotX = Math.max(0, Math.min(plotX, plotWidth));
 
-    // Calculate the selected index based on the clamped plotX
-    const selectedIndex = Math.floor((clampedPlotX / plotWidth) * data.length);
+    // **Updated: Use (data.length - 1) instead of data.length**
+    const selectedIndex = Math.floor((clampedPlotX / plotWidth) * (data.length - 1));
 
     if (selectedIndex >= 0 && selectedIndex < data.length && !selectedPoints.includes(selectedIndex)) {
       setSelectedPoints(prev => [...prev, selectedIndex]);
