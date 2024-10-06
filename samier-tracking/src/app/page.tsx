@@ -69,11 +69,9 @@ const VideoProcessingPage = () => {
     setFirstFrameLoaded(true);
   };
 
-  const handleDeletePositionPoints = (indices: number[]) => {
+  // **Unified Deletion Handler**
+  const handleDeletePoints = (indices: number[]) => {
     setPositionData(prev => prev.filter((_, index) => !indices.includes(index)));
-  };
-
-  const handleDeleteVelocityPoints = (indices: number[]) => {
     setVelocityData(prev => prev.filter((_, index) => !indices.includes(index)));
   };
 
@@ -117,9 +115,9 @@ const VideoProcessingPage = () => {
                     className="text-blue-600 hover:text-blue-800 transition-colors duration-200"
                   >
                     {isVideoVisible ? (
-                      <span>&#9660; Hide Video</span> // Downward chevron
+                      <span>&#9660; Hide Video</span> 
                     ) : (
-                      <span>&#9654; Show Video</span> // Rightward chevron
+                      <span>&#9654; Show Video</span> 
                     )}
                   </button>
                 </div>
@@ -142,7 +140,7 @@ const VideoProcessingPage = () => {
                   graphTitle="Position Data" 
                   graphDescription="Position over time for X and Y directions" 
                   yAxisLabel="Position (meters)"
-                  onDelete={handleDeletePositionPoints}
+                  onDelete={handleDeletePoints} 
                 />
               </div>
               {/* Velocity Graph with Y-axis Label */}
@@ -153,7 +151,7 @@ const VideoProcessingPage = () => {
                   graphTitle="Velocity Data" 
                   graphDescription="Velocity over time for X and Y directions" 
                   yAxisLabel="Velocity (m/s)"
-                  onDelete={handleDeleteVelocityPoints}
+                  onDelete={handleDeletePoints} 
                 />
               </div>
             </CardContent>
