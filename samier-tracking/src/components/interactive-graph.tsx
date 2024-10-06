@@ -11,19 +11,17 @@ interface DataPoint {
   y2?: number
 }
 
-const GRAPH_TITLE = "Interactive Dynamic Line Graph"
-const GRAPH_DESCRIPTION = "Drag to select points, then click the button to delete them. Click outside the graph to clear selection."
-const DARK_BLUE_LINE_NAME = "Dark Blue Line"
-const BLACK_LINE_NAME = "Black Line"
+interface InteractiveGraphProps {
+  data: DataPoint[];
+  graphTitle: string;
+  graphDescription: string;
+  onDelete: (indices: number[]) => void;
+}
 
-export function InteractiveGraph() {
-  const [data, setData] = useState<DataPoint[]>([
-    { x: 1, y1: 5, y2: 3 },
-    { x: 2, y1: 3, y2: 4 },
-    { x: 3, y1: 7, y2: 6 },
-    { x: 4, y1: 2, y2: 5 },
-    { x: 5, y1: 6, y2: 4 },
-  ])
+const DARK_BLUE_LINE_NAME = "X Value"
+const BLACK_LINE_NAME = "Y Value"
+
+export function InteractiveGraph({ data, graphTitle, graphDescription, onDelete }: InteractiveGraphProps) {
   const [selectedPoints, setSelectedPoints] = useState<number[]>([])
   const [isDragging, setIsDragging] = useState(false)
   const chartRef = useRef<HTMLDivElement>(null)
@@ -43,7 +41,7 @@ export function InteractiveGraph() {
     const x = e.clientX - chartRect.left
     const selectedIndex = Math.floor((x / chartRect.width) * data.length)
 
-    if (!selectedPoints.includes(selectedIndex)) {
+    if (selectedIndex >= 0 && selectedIndex < data.length && !selectedPoints.includes(selectedIndex)) {
       setSelectedPoints(prev => [...prev, selectedIndex])
     }
   }, [isDragging, data.length, selectedPoints])
@@ -53,9 +51,9 @@ export function InteractiveGraph() {
   }, [])
 
   const deleteSelectedPoints = useCallback(() => {
-    setData(prev => prev.filter((_, index) => !selectedPoints.includes(index)))
+    onDelete(selectedPoints)
     setSelectedPoints([])
-  }, [selectedPoints])
+  }, [selectedPoints, onDelete])
 
   const handleOutsideClick = useCallback((e: MouseEvent) => {
     if (chartRef.current && !chartRef.current.contains(e.target as Node)) {
@@ -97,8 +95,8 @@ export function InteractiveGraph() {
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{GRAPH_TITLE}</CardTitle>
-        <CardDescription>{GRAPH_DESCRIPTION}</CardDescription>
+        <CardTitle>{graphTitle}</CardTitle>
+        <CardDescription>{graphDescription}</CardDescription>
       </CardHeader>
       <CardContent className="p-0">
         <div
