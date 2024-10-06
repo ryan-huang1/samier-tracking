@@ -64,18 +64,18 @@ const VideoProcessingPage = () => {
   };
 
   const handleDeletePositionPoints = (indices: number[]) => {
-    setPositionData(prev => prev.filter((_, index) => !indices.includes(index)))
-  }
+    setPositionData(prev => prev.filter((_, index) => !indices.includes(index)));
+  };
 
   const handleDeleteVelocityPoints = (indices: number[]) => {
-    setVelocityData(prev => prev.filter((_, index) => !indices.includes(index)))
-  }
+    setVelocityData(prev => prev.filter((_, index) => !indices.includes(index)));
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card
         className={`w-full ${
-          processingResult ? "w-3/5" : "max-w-md"
+          processingResult ? "w-3/5 my-10" : "max-w-md"
         } transition-width duration-300`}
       >
         {!processingResult && (
@@ -110,8 +110,9 @@ const VideoProcessingPage = () => {
                   View Debug Video (opens in a new tab)
                 </a>
               </div>
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold">Position Graph:</h3>
+              {/* Position Graph with Top and Bottom Margin of 40px */}
+              <div className="my-10">
+                <h3 className="text-lg font-semibold pb-1.5">Position Graph:</h3>
                 <InteractiveGraph 
                   data={positionData} 
                   graphTitle="Position Data" 
@@ -119,8 +120,9 @@ const VideoProcessingPage = () => {
                   onDelete={handleDeletePositionPoints}
                 />
               </div>
-              <div className="mt-8">
-                <h3 className="text-lg font-semibold">Velocity Graph:</h3>
+              {/* Velocity Graph with Top Margin of 40px and No Bottom Margin */}
+              <div className="mt-10 mb-0">
+                <h3 className="text-lg font-semibold pb-1.5">Velocity Graph:</h3>
                 <InteractiveGraph 
                   data={velocityData} 
                   graphTitle="Velocity Data" 
