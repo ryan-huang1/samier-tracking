@@ -22,6 +22,7 @@ const VideoProcessingPage = () => {
   const [firstFrameLoaded, setFirstFrameLoaded] = useState(false);
   const [positionData, setPositionData] = useState<PositionDataPoint[]>([]);
   const [velocityData, setVelocityData] = useState<VelocityDataPoint[]>([]);
+  const [isVideoVisible, setIsVideoVisible] = useState(true);
 
   // Helper function to round to the hundredth place
   const roundToHundredth = (value: number) => {
@@ -76,6 +77,10 @@ const VideoProcessingPage = () => {
     setVelocityData(prev => prev.filter((_, index) => !indices.includes(index)));
   };
 
+  const toggleVideoVisibility = () => {
+    setIsVideoVisible((prev) => !prev);
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen">
       <Card
@@ -105,15 +110,29 @@ const VideoProcessingPage = () => {
             </CardHeader>
             <CardContent>
               <div className="mt-4">
-                <h3 className="text-lg font-semibold">Debug Video:</h3>
-                <a
-                  href={processingResult.debugVideoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 underline"
-                >
-                  View Debug Video (opens in a new tab)
-                </a>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Debug Video:</h3>
+                  <button
+                    onClick={toggleVideoVisibility}
+                    className="text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                  >
+                    {isVideoVisible ? (
+                      <span>&#9660; Hide Video</span> // Downward chevron
+                    ) : (
+                      <span>&#9654; Show Video</span> // Rightward chevron
+                    )}
+                  </button>
+                </div>
+                {isVideoVisible && (
+                  <video
+                    controls
+                    width="100%"
+                    className="my-4"
+                    src={processingResult.debugVideoUrl}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                )}
               </div>
               {/* Position Graph with Y-axis Label */}
               <div className="my-10">
