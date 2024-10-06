@@ -32,7 +32,7 @@ const VideoProcessingPage = () => {
   const handleProcessingComplete = (result: any) => {
     // Parse the response and extract relevant information
     if (result) {
-      const debugVideoUrl = `http://127.0.0.1:5000${result.debug_video_url}`;
+      const debugVideoUrl = `https://samier-tracking-backend-RyanHuang9.replit.app${result.debug_video_url}`;
       const positions = result.positions;
       const velocities = result.velocities;
 

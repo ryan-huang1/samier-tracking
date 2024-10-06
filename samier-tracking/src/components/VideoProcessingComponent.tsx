@@ -230,7 +230,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
       formData.append("pixel_to_meter", pixelDistance.toFixed(2));
 
       try {
-        const response = await fetch("http://127.0.0.1:5000/process_video", {
+        const response = await fetch("https://samier-tracking-backend-RyanHuang9.replit.app/process_video", {
           method: "POST",
           body: formData,
         });
