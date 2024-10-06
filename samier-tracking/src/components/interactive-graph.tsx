@@ -1,83 +1,84 @@
 "use client";
 
-import React, { useState, useRef, useCallback, useEffect } from 'react'
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Label } from 'recharts';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 interface DataPoint {
-  x: number
-  y1: number
-  y2?: number
+  x: number;
+  y1: number;
+  y2?: number;
 }
 
 interface InteractiveGraphProps {
   data: DataPoint[];
   graphTitle: string;
   graphDescription: string;
+  yAxisLabel: string;
   onDelete: (indices: number[]) => void;
 }
 
-const DARK_BLUE_LINE_NAME = "X Value"
-const BLACK_LINE_NAME = "Y Value"
+const DARK_BLUE_LINE_NAME = "X Value";
+const BLACK_LINE_NAME = "Y Value";
 
 // Define the chart margins as a constant
-const CHART_MARGIN = { top: 20, right: 30, left: 20, bottom: 20 }
+const CHART_MARGIN = { top: 20, right: 30, left: 30, bottom: 40 };
 
-export function InteractiveGraph({ data, graphTitle, graphDescription, onDelete }: InteractiveGraphProps) {
-  const [selectedPoints, setSelectedPoints] = useState<number[]>([])
-  const [isDragging, setIsDragging] = useState(false)
-  const chartRef = useRef<HTMLDivElement>(null)
+export function InteractiveGraph({ data, graphTitle, graphDescription, yAxisLabel, onDelete }: InteractiveGraphProps) {
+  const [selectedPoints, setSelectedPoints] = useState<number[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const chartRef = useRef<HTMLDivElement>(null);
 
-  const hasTwoLines = data.some(point => point.y2 !== undefined)
+  const hasTwoLines = data.some(point => point.y2 !== undefined);
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault()
-    setIsDragging(true)
-    setSelectedPoints([])
-  }, [])
+    e.preventDefault();
+    setIsDragging(true);
+    setSelectedPoints([]);
+  }, []);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging || !chartRef.current) return
+    if (!isDragging || !chartRef.current) return;
 
-    const chartRect = chartRef.current.getBoundingClientRect()
+    const chartRect = chartRef.current.getBoundingClientRect();
     
     // Calculate the plotting area's width and cursor position within it
-    const plotWidth = chartRect.width - CHART_MARGIN.left - CHART_MARGIN.right
-    const plotX = e.clientX - chartRect.left - CHART_MARGIN.left
+    const plotWidth = chartRect.width - CHART_MARGIN.left - CHART_MARGIN.right;
+    const plotX = e.clientX - chartRect.left - CHART_MARGIN.left;
 
     // Clamp plotX between 0 and plotWidth
-    const clampedPlotX = Math.max(0, Math.min(plotX, plotWidth))
+    const clampedPlotX = Math.max(0, Math.min(plotX, plotWidth));
 
     // Calculate the selected index based on the clamped plotX
-    const selectedIndex = Math.floor((clampedPlotX / plotWidth) * data.length)
+    const selectedIndex = Math.floor((clampedPlotX / plotWidth) * data.length);
 
     if (selectedIndex >= 0 && selectedIndex < data.length && !selectedPoints.includes(selectedIndex)) {
-      setSelectedPoints(prev => [...prev, selectedIndex])
+      setSelectedPoints(prev => [...prev, selectedIndex]);
     }
-  }, [isDragging, data.length, selectedPoints])
+  }, [isDragging, data.length, selectedPoints]);
 
   const handleMouseUp = useCallback(() => {
-    setIsDragging(false)
-  }, [])
+    setIsDragging(false);
+  }, []);
 
   const deleteSelectedPoints = useCallback(() => {
-    onDelete(selectedPoints)
-    setSelectedPoints([])
-  }, [selectedPoints, onDelete])
+    onDelete(selectedPoints);
+    setSelectedPoints([]);
+  }, [selectedPoints, onDelete]);
 
   const handleOutsideClick = useCallback((e: MouseEvent) => {
     if (chartRef.current && !chartRef.current.contains(e.target as Node)) {
-      setSelectedPoints([])
+      setSelectedPoints([]);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    document.addEventListener('click', handleOutsideClick)
+    document.addEventListener('click', handleOutsideClick);
     return () => {
-      document.removeEventListener('click', handleOutsideClick)
-    }
-  }, [handleOutsideClick])
+      document.removeEventListener('click', handleOutsideClick);
+    };
+  }, [handleOutsideClick]);
 
   const renderDot = (color: string) => ({ cx, cy, index }: { cx: number, cy: number, index: number }) => (
     <g>
@@ -101,7 +102,7 @@ export function InteractiveGraph({ data, graphTitle, graphDescription, onDelete 
         />
       )}
     </g>
-  )
+  );
 
   return (
     <Card className="w-full">
@@ -121,9 +122,14 @@ export function InteractiveGraph({ data, graphTitle, graphDescription, onDelete 
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={CHART_MARGIN}>
               <CartesianGrid strokeDasharray="3 3" />
-              {/* Limit the X-axis labels to 5 */}
-              <XAxis dataKey="x" interval={Math.ceil(data.length / 5)}/>
-              <YAxis />
+              {/* Limit the X-axis labels to 5 and add label */}
+              <XAxis dataKey="x" interval={Math.ceil(data.length / 5)}>
+                <Label value="Time (s)" offset={-10} position="insideBottom" />
+              </XAxis>
+              {/* Add Y-axis label from props */}
+              <YAxis>
+                <Label value={yAxisLabel} angle={-90} position="insideLeft" />
+              </YAxis>
               <Tooltip />
               <Legend />
               <Line
@@ -161,5 +167,5 @@ export function InteractiveGraph({ data, graphTitle, graphDescription, onDelete 
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

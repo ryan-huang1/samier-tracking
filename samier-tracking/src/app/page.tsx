@@ -115,23 +115,25 @@ const VideoProcessingPage = () => {
                   View Debug Video (opens in a new tab)
                 </a>
               </div>
-              {/* Position Graph with Top and Bottom Margin of 40px */}
+              {/* Position Graph with Y-axis Label */}
               <div className="my-10">
                 <h3 className="text-lg font-semibold pb-2.5">Position Graph:</h3>
                 <InteractiveGraph 
                   data={positionData} 
                   graphTitle="Position Data" 
                   graphDescription="Position over time for X and Y directions" 
+                  yAxisLabel="Position (meters)"
                   onDelete={handleDeletePositionPoints}
                 />
               </div>
-              {/* Velocity Graph with Top Margin of 40px and No Bottom Margin */}
+              {/* Velocity Graph with Y-axis Label */}
               <div className="mt-10 mb-0">
                 <h3 className="text-lg font-semibold pb-2.5">Velocity Graph:</h3>
                 <InteractiveGraph 
                   data={velocityData} 
                   graphTitle="Velocity Data" 
                   graphDescription="Velocity over time for X and Y directions" 
+                  yAxisLabel="Velocity (m/s)"
                   onDelete={handleDeleteVelocityPoints}
                 />
               </div>
