@@ -79,13 +79,69 @@ const VideoProcessingPage = () => {
     setIsVideoVisible((prev) => !prev);
   };
 
+  // **Export Position Data to CSV**
+  const exportPositionDataToCSV = () => {
+    const positionCSV = [
+      "Time (s),X Position (m),Y Position (m)",
+      ...positionData.map(point => `${point.x},${point.y1},${point.y2}`)
+    ].join("\n");
+
+    const blob = new Blob([positionCSV], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "position_data.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // **Export Velocity Data to CSV**
+  const exportVelocityDataToCSV = () => {
+    const velocityCSV = [
+      "Time (s),X Velocity (m/s),Y Velocity (m/s)",
+      ...velocityData.map(point => `${point.x},${point.y1},${point.y2}`)
+    ].join("\n");
+
+    const blob = new Blob([velocityCSV], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "velocity_data.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center min-h-screen relative">
       <Card
         className={`w-full ${
           processingResult ? "w-3/5 my-10" : "max-w-md"
         } transition-width duration-300`}
       >
+        {processingResult && (
+          <CardHeader className="flex items-center justify-between flex-wrap">
+            {/* Left Side: Title */}
+            <CardTitle className="text-2xl">
+              Processing Results Overview
+            </CardTitle>
+
+            {/* Right Side: Export Buttons */}
+            <div className="flex space-x-4 mt-2 sm:mt-0">
+              <button
+                onClick={exportPositionDataToCSV}
+                className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200"
+              >
+                Export Position Data
+              </button>
+              <button
+                onClick={exportVelocityDataToCSV}
+                className="text-sm text-gray-600 hover:text-gray-800 transition-colors duration-200"
+              >
+                Export Velocity Data
+              </button>
+            </div>
+          </CardHeader>
+        )}
         {!processingResult && (
           <>
             {!firstFrameLoaded && (
@@ -102,60 +158,55 @@ const VideoProcessingPage = () => {
           </>
         )}
         {processingResult && (
-          <>
-            <CardHeader>
-              <CardTitle className="text-2xl">Processing Results Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="mt-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Debug Video:</h3>
-                  <button
-                    onClick={toggleVideoVisibility}
-                    className="text-blue-600 hover:text-blue-800 transition-colors duration-200"
-                  >
-                    {isVideoVisible ? (
-                      <span>&#9660; Hide Video</span> 
-                    ) : (
-                      <span>&#9654; Show Video</span> 
-                    )}
-                  </button>
-                </div>
-                {isVideoVisible && (
-                  <video
-                    controls
-                    width="100%"
-                    className="my-4"
-                    src={processingResult.debugVideoUrl}
-                  >
-                    Your browser does not support the video tag.
-                  </video>
-                )}
+          <CardContent>
+            <div className="mt-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold">Debug Video:</h3>
+                <button
+                  onClick={toggleVideoVisibility}
+                  className="text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                >
+                  {isVideoVisible ? (
+                    <span>&#9660; Hide Video</span>
+                  ) : (
+                    <span>&#9654; Show Video</span>
+                  )}
+                </button>
               </div>
-              {/* Position Graph with Y-axis Label */}
-              <div className="my-10">
-                <h3 className="text-lg font-semibold pb-2.5">Position Graph:</h3>
-                <InteractiveGraph 
-                  data={positionData} 
-                  graphTitle="Position Data" 
-                  graphDescription="Position over time for X and Y directions" 
-                  yAxisLabel="Position (meters)"
-                  onDelete={handleDeletePoints} 
-                />
-              </div>
-              {/* Velocity Graph with Y-axis Label */}
-              <div className="mt-10 mb-0">
-                <h3 className="text-lg font-semibold pb-2.5">Velocity Graph:</h3>
-                <InteractiveGraph 
-                  data={velocityData} 
-                  graphTitle="Velocity Data" 
-                  graphDescription="Velocity over time for X and Y directions" 
-                  yAxisLabel="Velocity (m/s)"
-                  onDelete={handleDeletePoints} 
-                />
-              </div>
-            </CardContent>
-          </>
+              {isVideoVisible && (
+                <video
+                  controls
+                  width="100%"
+                  className="my-4"
+                  src={processingResult.debugVideoUrl}
+                >
+                  Your browser does not support the video tag.
+                </video>
+              )}
+            </div>
+            {/* Position Graph with Y-axis Label */}
+            <div className="my-10">
+              <h3 className="text-lg font-semibold pb-2.5">Position Graph:</h3>
+              <InteractiveGraph
+                data={positionData}
+                graphTitle="Position Data"
+                graphDescription="Position over time for X and Y directions"
+                yAxisLabel="Position (meters)"
+                onDelete={handleDeletePoints}
+              />
+            </div>
+            {/* Velocity Graph with Y-axis Label */}
+            <div className="mt-10 mb-0">
+              <h3 className="text-lg font-semibold pb-2.5">Velocity Graph:</h3>
+              <InteractiveGraph
+                data={velocityData}
+                graphTitle="Velocity Data"
+                graphDescription="Velocity over time for X and Y directions"
+                yAxisLabel="Velocity (m/s)"
+                onDelete={handleDeletePoints}
+              />
+            </div>
+          </CardContent>
         )}
       </Card>
     </div>
