@@ -179,6 +179,8 @@ const VideoProcessingPage = () => {
                   width="100%"
                   className="my-4"
                   src={processingResult.debugVideoUrl}
+                  loop // Added loop attribute
+                  autoPlay // Added autoPlay attribute
                 >
                   Your browser does not support the video tag.
                 </video>
