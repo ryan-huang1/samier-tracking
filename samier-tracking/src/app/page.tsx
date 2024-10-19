@@ -32,6 +32,11 @@ const VideoProcessingPage = () => {
   const handleProcessingComplete = (result: any) => {
     // Parse the response and extract relevant information
     if (result) {
+      if (result.error) {
+        alert(result.error);
+        return;
+      }
+
       const debugVideoUrl = `https://samier-tracking-backend-RyanHuang9.replit.app${result.debug_video_url}`;
       const positions = result.positions;
       const velocities = result.velocities;
@@ -149,10 +154,10 @@ const VideoProcessingPage = () => {
                 <CardTitle className="text-2xl">Samier Object Tracking</CardTitle>
               </CardHeader>
             )}
-              <VideoProcessingComponent
-                onProcessingComplete={handleProcessingComplete}
-                onFirstFrameLoaded={handleFirstFrameLoaded}
-              />
+            <VideoProcessingComponent
+              onProcessingComplete={handleProcessingComplete}
+              onFirstFrameLoaded={handleFirstFrameLoaded}
+            />
           </>
         )}
         {processingResult && (

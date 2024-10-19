@@ -36,7 +36,7 @@ const exampleVideos: ExampleVideo[] = [
 
 const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
   onProcessingComplete,
-  onFirstFrameLoaded
+  onFirstFrameLoaded,
 }) => {
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [firstFrame, setFirstFrame] = useState<string | null>(null);
@@ -65,7 +65,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
     }
   };
 
-  const handleExampleVideoSelect = (video: ExampleVideo) => {
+  const handleExampleVideoSelect = async (video: ExampleVideo) => {
     setVideoSrc(video.url);
     setFirstFrame(null);
     setClickCoordinates(null);
@@ -73,6 +73,20 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
     setSavedPoint(null);
     setPoints([]);
     fileRef.current = null;
+
+    // Fetch the video blob and create a File object
+    try {
+      const response = await fetch(video.url);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch the example video: ${response.statusText}`);
+      }
+      const blob = await response.blob();
+      const file = new File([blob], `${video.title}.mp4`, { type: blob.type });
+      fileRef.current = file;
+    } catch (error) {
+      console.error("Error fetching example video:", error);
+      alert("Failed to load the selected example video. Please try another one.");
+    }
   };
 
   useEffect(() => {
@@ -270,6 +284,10 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
           body: formData,
         });
 
+        if (!response.ok) {
+          throw new Error(`Backend responded with status ${response.status}`);
+        }
+
         const result = await response.json();
         onProcessingComplete(result);
       } catch (error) {
@@ -278,6 +296,8 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
       } finally {
         setLoading(false);
       }
+    } else {
+      alert("Please ensure that the video is selected and two points are marked.");
     }
   };
 
@@ -396,7 +416,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
                 >
                   {clickCoordinates && (
                     <p>
-                      <strong>Coordinates:</strong> X: {clickCoordinates.x.toFixed(2)}, Y: 
+                      <strong>Coordinates:</strong> X: {clickCoordinates.x.toFixed(2)}, Y:
                       {clickCoordinates.y.toFixed(2)}
                     </p>
                   )}
@@ -472,7 +492,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
                 </Button>
                 <Button
                   className="ml-2 flex justify-center items-center"
-                  style={{ minWidth: '3rem' }}
+                  style={{ minWidth: "3rem" }}
                   variant="default"
                   onClick={handleNext}
                   disabled={points.length !== 2 || loading}
