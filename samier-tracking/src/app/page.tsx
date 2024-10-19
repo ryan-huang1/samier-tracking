@@ -149,12 +149,10 @@ const VideoProcessingPage = () => {
                 <CardTitle className="text-2xl">Samier Object Tracking</CardTitle>
               </CardHeader>
             )}
-            <CardContent>
               <VideoProcessingComponent
                 onProcessingComplete={handleProcessingComplete}
                 onFirstFrameLoaded={handleFirstFrameLoaded}
               />
-            </CardContent>
           </>
         )}
         {processingResult && (
