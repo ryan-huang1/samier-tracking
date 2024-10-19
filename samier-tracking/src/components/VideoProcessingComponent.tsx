@@ -18,19 +18,19 @@ interface ExampleVideo {
 
 const exampleVideos: ExampleVideo[] = [
   {
-    title: "Pendulum Motion",
-    url: "/videos/pendulum.mp4",
-    thumbnail: "/processed_frames/frame_1.jpg",
+    title: "Basketball Shot",
+    url: "/videos/basketball.mp4",
+    thumbnail: "/frames/basketball.jpg",
   },
   {
-    title: "Projectile Motion",
-    url: "/videos/projectile.mp4",
-    thumbnail: "/processed_frames/frame_2.jpg",
+    title: "Cart Collision",
+    url: "/videos/cart.mp4",
+    thumbnail: "/frames/cart.jpg",
   },
   {
-    title: "Circular Motion",
-    url: "/videos/circular.mp4",
-    thumbnail: "/processed_frames/frame_3.jpg",
+    title: "Turntable Turning",
+    url: "/videos/turntable.mp4",
+    thumbnail: "/frames/turntable.jpg",
   },
 ];
 
