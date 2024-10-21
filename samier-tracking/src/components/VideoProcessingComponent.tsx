@@ -23,9 +23,9 @@ const exampleVideos: ExampleVideo[] = [
     thumbnail: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/basketball.jpg",
   },
   {
-    title: "Cart Collision",
-    url: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/cart.mp4",
-    thumbnail: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/cart.jpg",
+    title: "Pool Table Shot",
+    url: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/pool.mp4",
+    thumbnail: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/pool.jpg",
   },
   {
     title: "Turntable Turning",
