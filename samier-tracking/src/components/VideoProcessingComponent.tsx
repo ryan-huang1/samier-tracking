@@ -29,7 +29,7 @@ const exampleVideos: ExampleVideo[] = [
   },
   {
     title: "Turntable Turning",
-    url: "/videos/turntable.mp4",
+    url: "/https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/turntable.mp4",
     thumbnail: "/frames/turntable.jpg",
   },
 ];
