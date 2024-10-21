@@ -19,18 +19,18 @@ interface ExampleVideo {
 const exampleVideos: ExampleVideo[] = [
   {
     title: "Basketball Shot",
-    url: "/videos/basketball.mp4",
-    thumbnail: "/frames/basketball.jpg",
+    url: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/basketball.mp4",
+    thumbnail: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/basketball.jpg",
   },
   {
     title: "Cart Collision",
-    url: "/videos/cart.mp4",
-    thumbnail: "/frames/cart.jpg",
+    url: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/cart.mp4",
+    thumbnail: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/cart.jpg",
   },
   {
     title: "Turntable Turning",
     url: "/https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/turntable.mp4",
-    thumbnail: "/frames/turntable.jpg",
+    thumbnail: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/turntable.jpg",
   },
 ];
 
