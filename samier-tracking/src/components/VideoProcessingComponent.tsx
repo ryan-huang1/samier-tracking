@@ -3,7 +3,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Upload, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { CardContent } from "@/components/ui/card";
 
 interface VideoProcessingComponentProps {
   onProcessingComplete: (result: any) => void;
@@ -179,7 +178,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
   return (
     <div className="space-y-4">
       {!firstFrame && (
-        <CardContent className="p-4">
+        <div className="space-y-4">
           <div className="flex items-center justify-center w-full">
             <label
               htmlFor="video-upload"
@@ -201,8 +200,8 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
               />
             </label>
           </div>
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-4">Or choose an example video:</h3>
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-2">Or choose an example video:</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
               {exampleVideos.map((video, index) => (
                 <div
@@ -222,13 +221,13 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
               ))}
             </div>
           </div>
-        </CardContent>
+        </div>
       )}
       {videoSrc && (
         <video ref={videoRef} src={videoSrc} style={{ display: "none" }} crossOrigin="anonymous" />
       )}
       {firstFrame && (
-        <CardContent className="p-4">
+        <div className="space-y-4">
           <h3 className="text-lg font-semibold mb-2">Click on Object to Track:</h3>
           <div style={{ position: "relative", display: "inline-block" }}>
             <img
@@ -285,7 +284,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
               )}
             </div>
           </div>
-        </CardContent>
+        </div>
       )}
     </div>
   );

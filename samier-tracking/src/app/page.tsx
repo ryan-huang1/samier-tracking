@@ -121,12 +121,27 @@ const VideoProcessingPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen relative p-4">
+    <div className="flex items-center justify-center min-h-screen relative px-4"> {/* Added horizontal padding */}
       <Card
         className={`w-full ${
           processingResult ? "w-3/5 my-10" : "max-w-md"
         } transition-width duration-300`}
       >
+        {/* **Always Visible Header** */}
+        <div className="flex flex-col space-y-1.5 p-6 pb-0"> {/* Removed bottom padding by setting pb-0 */}
+          <h3 className="font-semibold tracking-tight text-2xl">Samier Object Tracking</h3>
+        </div>
+
+        {/* Conditional Rendering Based on Processing Result */}
+        {!processingResult && (
+          <CardContent className="p-4"> {/* Maintained padding around the content */}
+            <VideoProcessingComponent
+              onProcessingComplete={handleProcessingComplete}
+              onFirstFrameLoaded={handleFirstFrameLoaded}
+            />
+          </CardContent>
+        )}
+
         {processingResult && (
           <CardHeader className="flex items-center justify-between flex-wrap">
             {/* Left Side: Title */}
@@ -149,19 +164,7 @@ const VideoProcessingPage = () => {
             </div>
           </CardHeader>
         )}
-        {!processingResult && (
-          <>
-            {!firstFrameLoaded && (
-              <CardHeader>
-                <CardTitle className="text-2xl">Samier Object Tracking</CardTitle>
-              </CardHeader>
-            )}
-            <VideoProcessingComponent
-              onProcessingComplete={handleProcessingComplete}
-              onFirstFrameLoaded={handleFirstFrameLoaded}
-            />
-          </>
-        )}
+
         {processingResult && (
           <CardContent>
             <div className="mt-4">
