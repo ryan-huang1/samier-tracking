@@ -177,7 +177,7 @@ const VideoProcessingComponent = ({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       {!firstFrame && (
         <div className="space-y-4">
           {/* File Upload Section */}
@@ -230,10 +230,23 @@ const VideoProcessingComponent = ({
         <video ref={videoRef} src={videoSrc} style={{ display: "none" }} crossOrigin="anonymous" />
       )}
       {firstFrame && (
-        <div className="space-y-4">
+        <div className="space-y-2">
           {/* Click on Object to Track Section */}
-          <h3 className="text-lg font-semibold mb-2">Click on Object to Track:</h3>
-          <div style={{ position: "relative", display: "inline-block" }}>
+          <h3
+            className="text-lg font-semibold mb-2"
+            style={{ paddingLeft: "12px", paddingRight: "12px" }}
+          >
+            Click on Object to Track:
+          </h3>
+
+          <div
+            style={{
+              position: "relative",
+              display: "inline-block",
+              marginLeft: "12px", // Added left padding
+              marginRight: "12px", // Added right padding
+            }}
+          >
             <img
               ref={imageRef}
               src={firstFrame}
@@ -263,32 +276,35 @@ const VideoProcessingComponent = ({
             )}
           </div>
           {/* Next Button and Coordinates Display */}
-          <div className="mt-4 flex items-center">
-            <Button
-              variant="default"
-              onClick={handleNext}
-              disabled={!clickCoordinates || loading}
-            >
-              {loading ? (
-                <Loader2 className="animate-spin h-5 w-5 text-white" />
-              ) : (
-                "Next"
-              )}
-            </Button>
-            <div
-              className={`ml-4 transition-opacity duration-200 ${
-                clickCoordinates ? "opacity-100" : "opacity-0"
-              }`}
-              style={{ whiteSpace: "nowrap" }}
-            >
-              {clickCoordinates && (
-                <p>
-                  <strong>Coordinates:</strong> X: {clickCoordinates.x.toFixed(2)}, Y:
-                  {clickCoordinates.y.toFixed(2)}
-                </p>
-              )}
-            </div>
-          </div>
+          <div
+  className="mt-4 flex items-center"
+  style={{ paddingLeft: "12px", paddingRight: "12px" }}
+>
+  <Button
+    variant="default"
+    onClick={handleNext}
+    disabled={!clickCoordinates || loading}
+  >
+    {loading ? (
+      <Loader2 className="animate-spin h-5 w-5 text-white" />
+    ) : (
+      "Next"
+    )}
+  </Button>
+  <div
+    className={`ml-4 transition-opacity duration-200 ${
+      clickCoordinates ? "opacity-100" : "opacity-0"
+    }`}
+    style={{ whiteSpace: "nowrap" }}
+  >
+    {clickCoordinates && (
+      <p>
+        <strong>Coordinates:</strong> X: {clickCoordinates.x.toFixed(2)}, Y:
+        {clickCoordinates.y.toFixed(2)}
+      </p>
+    )}
+  </div>
+</div>
         </div>
       )}
     </div>
