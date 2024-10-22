@@ -42,18 +42,22 @@ const VideoProcessingPage = () => {
       const velocities = result.velocities;
 
       // Convert positions to graph data points for InteractiveGraph, rounded to hundredth place
-      const posData: PositionDataPoint[] = positions.time_steps.map((time: number, index: number) => ({
-        x: roundToHundredth(time),
-        y1: roundToHundredth(positions.x_positions_meters[index]),
-        y2: roundToHundredth(positions.y_positions_meters_flipped[index]),
-      }));
+      const posData: PositionDataPoint[] = positions.time_steps.map(
+        (time: number, index: number) => ({
+          x: roundToHundredth(time),
+          y1: roundToHundredth(positions.x_positions_meters[index]),
+          y2: roundToHundredth(positions.y_positions_meters_flipped[index]),
+        })
+      );
 
       // Convert velocities to graph data points for InteractiveGraph, rounded to hundredth place
-      const velData: VelocityDataPoint[] = velocities.time_steps.map((time: number, index: number) => ({
-        x: roundToHundredth(time),
-        y1: roundToHundredth(velocities.x_velocities_m_per_s[index]),
-        y2: roundToHundredth(velocities.y_velocities_m_per_s[index]),
-      }));
+      const velData: VelocityDataPoint[] = velocities.time_steps.map(
+        (time: number, index: number) => ({
+          x: roundToHundredth(time),
+          y1: roundToHundredth(velocities.x_velocities_m_per_s[index]),
+          y2: roundToHundredth(velocities.y_velocities_m_per_s[index]),
+        })
+      );
 
       // Set the parsed result to the state
       setProcessingResult({
@@ -76,8 +80,8 @@ const VideoProcessingPage = () => {
 
   // **Unified Deletion Handler**
   const handleDeletePoints = (indices: number[]) => {
-    setPositionData(prev => prev.filter((_, index) => !indices.includes(index)));
-    setVelocityData(prev => prev.filter((_, index) => !indices.includes(index)));
+    setPositionData((prev) => prev.filter((_, index) => !indices.includes(index)));
+    setVelocityData((prev) => prev.filter((_, index) => !indices.includes(index)));
   };
 
   const toggleVideoVisibility = () => {
@@ -88,7 +92,7 @@ const VideoProcessingPage = () => {
   const exportPositionDataToCSV = () => {
     const positionCSV = [
       "Time (s),X Position (m),Y Position (m)",
-      ...positionData.map(point => `${point.x},${point.y1},${point.y2}`)
+      ...positionData.map((point) => `${point.x},${point.y1},${point.y2}`),
     ].join("\n");
 
     const blob = new Blob([positionCSV], { type: "text/csv" });
@@ -104,7 +108,7 @@ const VideoProcessingPage = () => {
   const exportVelocityDataToCSV = () => {
     const velocityCSV = [
       "Time (s),X Velocity (m/s),Y Velocity (m/s)",
-      ...velocityData.map(point => `${point.x},${point.y1},${point.y2}`)
+      ...velocityData.map((point) => `${point.x},${point.y1},${point.y2}`),
     ].join("\n");
 
     const blob = new Blob([velocityCSV], { type: "text/csv" });
@@ -117,7 +121,7 @@ const VideoProcessingPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen relative">
+    <div className="flex items-center justify-center min-h-screen relative p-4">
       <Card
         className={`w-full ${
           processingResult ? "w-3/5 my-10" : "max-w-md"
@@ -126,9 +130,7 @@ const VideoProcessingPage = () => {
         {processingResult && (
           <CardHeader className="flex items-center justify-between flex-wrap">
             {/* Left Side: Title */}
-            <CardTitle className="text-2xl">
-              Processing Results Overview
-            </CardTitle>
+            <CardTitle className="text-2xl">Processing Results Overview</CardTitle>
 
             {/* Right Side: Export Buttons */}
             <div className="flex space-x-4 mt-2 sm:mt-0">

@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Upload, Loader2, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 
 interface VideoProcessingComponentProps {
   onProcessingComplete: (result: any) => void;
@@ -29,7 +29,7 @@ const exampleVideos: ExampleVideo[] = [
   },
   {
     title: "Turntable Turning",
-    url: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/turntable.mp4", 
+    url: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/turntable.mp4",
     thumbnail: "https://pub-b9538b15e1c34772aaf7f433d4657b2b.r2.dev/turntable.jpg",
   },
 ];
@@ -43,7 +43,9 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
   const [clickCoordinates, setClickCoordinates] = useState<{ x: number; y: number } | null>(null);
   const [dotPosition, setDotPosition] = useState<{ x: number; y: number } | null>(null);
   const [savedPoint, setSavedPoint] = useState<{ x: number; y: number } | null>(null);
-  const [points, setPoints] = useState<{ x: number; y: number; dotX: number; dotY: number; isDragging: boolean }[]>([]);
+  const [points, setPoints] = useState<
+    { x: number; y: number; dotX: number; dotY: number; isDragging: boolean }[]
+  >([]);
   const [loading, setLoading] = useState<boolean>(false);
   const imageRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -310,49 +312,47 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
       onMouseUp={handleMouseUp}
     >
       {!firstFrame && (
-        <div>
-          <CardContent>
-            <div className="flex items-center justify-center w-full">
-              <label
-                htmlFor="video-upload"
-                className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
-              >
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <Upload className="w-8 h-8 mb-4 text-gray-500" />
-                  <p className="mb-2 text-sm text-gray-500">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
-                  </p>
-                  <p className="text-xs text-gray-500">MP4, WebM, or Ogg (MAX. 100MB)</p>
-                </div>
-                <input
-                  id="video-upload"
-                  type="file"
-                  className="hidden"
-                  onChange={handleFileChange}
-                  accept="video/*"
-                />
-              </label>
-            </div>
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold mb-4">Or choose an example video:</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {exampleVideos.map((video, index) => (
-                  <div
-                    key={index}
-                    className="border rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow duration-200"
-                    onClick={() => handleExampleVideoSelect(video)}
-                  >
-                    <img src={video.thumbnail} alt={video.title} className="w-full h-24 object-cover" />
-                    <div className="p-2 flex items-center justify-between">
-                      <span className="text-sm font-medium">{video.title}</span>
-                      <Play className="w-4 h-4 text-gray-500" />
-                    </div>
-                  </div>
-                ))}
+        <CardContent className="p-4">
+          <div className="flex items-center justify-center w-full">
+            <label
+              htmlFor="video-upload"
+              className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100"
+            >
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                <Upload className="w-8 h-8 mb-4 text-gray-500" />
+                <p className="mb-2 text-sm text-gray-500">
+                  <span className="font-semibold">Click to upload</span> or drag and drop
+                </p>
+                <p className="text-xs text-gray-500">MP4, WebM, or Ogg (MAX. 100MB)</p>
               </div>
+              <input
+                id="video-upload"
+                type="file"
+                className="hidden"
+                onChange={handleFileChange}
+                accept="video/*"
+              />
+            </label>
+          </div>
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold mb-4">Or choose an example video:</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+              {exampleVideos.map((video, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition-shadow duration-200"
+                  onClick={() => handleExampleVideoSelect(video)}
+                >
+                  <img src={video.thumbnail} alt={video.title} className="w-full h-24 object-cover" />
+                  <div className="p-2 flex items-center justify-between">
+                    <span className="text-sm font-medium">{video.title}</span>
+                    <Play className="w-4 h-4 text-gray-500" />
+                  </div>
+                </div>
+              ))}
             </div>
-          </CardContent>
-        </div>
+          </div>
+        </CardContent>
       )}
       {videoSrc && (
         <video
@@ -363,7 +363,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
         />
       )}
       {firstFrame && (
-        <div>
+        <CardContent className="p-4">
           {!savedPoint ? (
             <>
               <h3 className="text-lg font-semibold mb-2">Click on Object to Track:</h3>
@@ -486,7 +486,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
                   </svg>
                 )}
               </div>
-              <div className="mt-4 flex items-center justify-left">
+              <div className="mt-4 flex items-center">
                 <Button variant="secondary" onClick={handleBack}>
                   Back
                 </Button>
@@ -518,7 +518,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
               </div>
             </>
           )}
-        </div>
+        </CardContent>
       )}
     </div>
   );
