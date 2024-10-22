@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import VideoProcessingComponent from "@/components/VideoProcessingComponent";
 import { InteractiveGraph } from "@/components/interactive-graph";
 
@@ -17,7 +17,7 @@ interface VelocityDataPoint {
   y2: number; // y_velocity
 }
 
-const VideoProcessingPage = () => {
+const VideoProcessingPage: React.FC = () => {
   const [processingResult, setProcessingResult] = useState<any>(null);
   const [firstFrameLoaded, setFirstFrameLoaded] = useState(false);
   const [positionData, setPositionData] = useState<PositionDataPoint[]>([]);
@@ -121,31 +121,19 @@ const VideoProcessingPage = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen relative px-4"> {/* Added horizontal padding */}
+    <div className="flex items-center justify-center min-h-screen relative px-4">
+      {/* Added horizontal padding */}
       <Card
         className={`w-full ${
           processingResult ? "w-3/5 my-10" : "max-w-md"
         } transition-width duration-300`}
       >
-        {/* **Always Visible Header** */}
-        <div className="flex flex-col space-y-1.5 p-6 pb-0"> {/* Removed bottom padding by setting pb-0 */}
-          <h3 className="font-semibold tracking-tight text-2xl">Samier Object Tracking</h3>
-        </div>
-
-        {/* Conditional Rendering Based on Processing Result */}
-        {!processingResult && (
-          <CardContent className="p-4"> {/* Maintained padding around the content */}
-            <VideoProcessingComponent
-              onProcessingComplete={handleProcessingComplete}
-              onFirstFrameLoaded={handleFirstFrameLoaded}
-            />
-          </CardContent>
-        )}
-
         {processingResult && (
-          <CardHeader className="flex items-center justify-between flex-wrap">
+          <div className="flex items-center justify-between flex-wrap p-6">
             {/* Left Side: Title */}
-            <CardTitle className="text-2xl">Processing Results Overview</CardTitle>
+            <h3 className="font-semibold tracking-tight text-2xl">
+              Processing Results Overview
+            </h3>
 
             {/* Right Side: Export Buttons */}
             <div className="flex space-x-4 mt-2 sm:mt-0">
@@ -162,9 +150,26 @@ const VideoProcessingPage = () => {
                 Export Velocity Data
               </button>
             </div>
-          </CardHeader>
+          </div>
         )}
-
+        {!processingResult && (
+          <>
+            {/* Updated Header with Conditional Rendering */}
+            {!firstFrameLoaded && (
+              <div className="flex flex-col space-y-1.5 p-6 pb-0">
+                <h3 className="font-semibold tracking-tight text-2xl">
+                  Samier Object Tracking
+                </h3>
+              </div>
+            )}
+            <CardContent className="p-4">
+              <VideoProcessingComponent
+                onProcessingComplete={handleProcessingComplete}
+                onFirstFrameLoaded={handleFirstFrameLoaded}
+              />
+            </CardContent>
+          </>
+        )}
         {processingResult && (
           <CardContent>
             <div className="mt-4">

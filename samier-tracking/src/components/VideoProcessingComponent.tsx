@@ -33,10 +33,11 @@ const exampleVideos: ExampleVideo[] = [
   },
 ];
 
-const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
+// Removed React.FC to avoid issues with implicit children prop and better type inference
+const VideoProcessingComponent = ({
   onProcessingComplete,
   onFirstFrameLoaded,
-}) => {
+}: VideoProcessingComponentProps) => {
   const [videoSrc, setVideoSrc] = useState<string | null>(null);
   const [firstFrame, setFirstFrame] = useState<string | null>(null);
   const [clickCoordinates, setClickCoordinates] = useState<{ x: number; y: number } | null>(null);
@@ -179,6 +180,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
     <div className="space-y-4">
       {!firstFrame && (
         <div className="space-y-4">
+          {/* File Upload Section */}
           <div className="flex items-center justify-center w-full">
             <label
               htmlFor="video-upload"
@@ -200,6 +202,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
               />
             </label>
           </div>
+          {/* Example Videos Section */}
           <div className="mt-4">
             <h3 className="text-lg font-semibold mb-2">Or choose an example video:</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -228,6 +231,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
       )}
       {firstFrame && (
         <div className="space-y-4">
+          {/* Click on Object to Track Section */}
           <h3 className="text-lg font-semibold mb-2">Click on Object to Track:</h3>
           <div style={{ position: "relative", display: "inline-block" }}>
             <img
@@ -258,6 +262,7 @@ const VideoProcessingComponent: React.FC<VideoProcessingComponentProps> = ({
               ></div>
             )}
           </div>
+          {/* Next Button and Coordinates Display */}
           <div className="mt-4 flex items-center">
             <Button
               variant="default"
